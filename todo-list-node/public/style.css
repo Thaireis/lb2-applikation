@@ -148,3 +148,6 @@ hr{
 #msg{
     font-weight: bold;
 }
+button{
+    size: 50px;
+}
