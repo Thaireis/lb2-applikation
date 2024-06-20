@@ -1,4 +1,5 @@
 const db = require('./fw/db');
+let keyword_classLevel;
 
 async function handleLogin(req, res) {
     let msg = '';
@@ -69,6 +70,15 @@ async function validateLogin (username, password) {
 
 function getHtml() {
     return `
+   <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    ></script>
+    <script type="text/javascript">
+      (function () {
+        emailjs.init("BeMXmddAPmJBqdzDy");
+      })();
+    </script>
     <h2>Login</h2>
 
     <form id="form" method="get" action="/login">
@@ -84,8 +94,74 @@ function getHtml() {
             <label for="submit" ></label>
             <input id="submit" type="submit" class="btn size-auto" value="Login" />
         </div>
-    </form>`;
+    </form>
+       <div class="form-group">
+            <p>If you have forgotten your password please give her your email</p>
+            <label for="email"> email</label>
+            <input type="email" class="form-control size-medium" name="email" id="email">
+        </div>
+         <button onclick="sendMail(); return false" value="/Get_password">Submit</button>
+   <form id="form" method="get" action="/Get_keyword">
+       <div class="form-group">
+            <label for="email"> the received Key</label>
+            <input type="text" class="form-control size-medium" name="keyword" id="keyword">
+        </div>
+          <button onclick="checkKeyword()" value="/Get_keyword">Submit</button>
+
+    </form>
+
+`;
+
 }
+function checkKeyword(){
+    let gotten_keyword = document.getElementById("keyword").value
+    if (gotten_keyword === keyword_classLevel){
+
+    }
+}
+function sendMail() {
+    let keyword = generatePass()
+    keyword_classLevel = keyword;
+    const params = {
+        email: document.getElementById("email").value,
+        message: keyword
+    };
+
+    const serviceID = "service_lnaswss";
+    const templateID = "template_5b5my6j";
+
+    emailjs.send(serviceID, templateID, params)
+        .then(res=>{
+            document.getElementById("name").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("message").value = "";
+            console.log(res);
+            alert("Your message sent successfully!!")
+
+        })
+        .catch(err=>console.log(err));
+
+}
+/* Function to generate combination of password */
+function generatePass() {
+    let pass = '';
+    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+        'abcdefghijklmnopqrstuvwxyz0123456789@#$';
+
+    for (let i = 1; i <= 8; i++) {
+        let char = Math.floor(Math.random()
+            * str.length + 1);
+
+        pass += str.charAt(char)
+    }
+
+    return pass;
+}
+
+console.log(generatePass());
+
+
+
 
 module.exports = {
     handleLogin: handleLogin,
